@@ -7,6 +7,15 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+app.get("/set", (req, res) => {
+ const a = 1;
+ res.send(`a = ${a}`);
+});
+
+app.get("/fetch", (req, res) => {
+ res.send(`a = ${a}`);
+})
+
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
