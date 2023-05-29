@@ -11,6 +11,29 @@ const urlDatabase = {
 };
 
 
+// function generateRandomString() to generate an unique short url for the input long term url
+function generateRandomString() {
+    let result;
+    do {
+        result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        for (let i = 0; i < 6; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+    } while(urlDatabase[result]);
+    return result;
+}
+
+app.use(express.urlencoded({ extended: true }));
+
+// add the input url to urlDatabase;
+app.post("/urls", (req, res) => {
+  const longURL = req.body.longURL; // Assume "longURL" is the name of input field
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL; // Add new generated shortURL-longURL pair to the database
+  res.redirect("/urls/" + shortURL); // Redirect to page of newly created shortURL
+});
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
