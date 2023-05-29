@@ -35,6 +35,30 @@ app.post("/urls", (req, res) => {
   res.redirect("/urls/" + shortURL); // Redirect to page of newly created shortURL
 });
 
+// add new app.get,
+// app.get("/urls/:shortURL", (req, res) => {
+//   const shortURL = req.params.shortURL;
+//   const longURL = urlDatabase[shortURL];
+//   if (longURL) {
+//     let templateVars = { shortURL: req.params.shortURL, longURL: longURL };
+//     res.render("urls_show", templateVars);
+//   } else {
+//     res.status(404).send("Short URL Not Found");
+//   }
+// });
+
+app.get("/u/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL];
+  if (longURL) {
+    let templateVars = { shortURL: req.params.id, longURL: longURL };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(404).send("Short URL Not Found");
+  }
+});
+
+
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
