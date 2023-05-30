@@ -35,6 +35,15 @@ app.post("/urls", (req, res) => {
   res.redirect("/urls/" + shortURL); // Redirect to page of newly created shortURL
 });
 
+// /urls/:id/delete update the delete button function
+app.post("/urls/:id/delete", (req, res) => {
+  const id = req.params.id;  // the the url id
+  if (urlDatabase[id]) {
+    delete urlDatabase[id];  // if the url exists, delete it
+  }
+  res.redirect("/urls"); // redirect to /urls
+});
+
 // add new app.get,
 // app.get("/urls/:shortURL", (req, res) => {
 //   const shortURL = req.params.shortURL;
