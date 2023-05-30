@@ -44,17 +44,15 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls"); // redirect to /urls
 });
 
-// add new app.get,
-// app.get("/urls/:shortURL", (req, res) => {
-//   const shortURL = req.params.shortURL;
-//   const longURL = urlDatabase[shortURL];
-//   if (longURL) {
-//     let templateVars = { shortURL: req.params.shortURL, longURL: longURL };
-//     res.render("urls_show", templateVars);
-//   } else {
-//     res.status(404).send("Short URL Not Found");
-//   }
-// });
+// app.post, update the edited context in /urls/:id
+app.post("/urls/:id", (req, res) => {
+    const id = req.params.id;
+    if (urlDatabase[id]) {
+        urlDatabase[id] = req.body.longURL; 
+    }
+    res.redirect("/urls");
+});
+
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
@@ -77,7 +75,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-app.get("/urls/:shortURL", (req, res) => {
+app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id] };
   res.render("urls_show", templateVars);
 });
