@@ -53,6 +53,17 @@ app.post("/urls/:id", (req, res) => {
     res.redirect("/urls");
 });
 
+// Handle POST request to '/login' endpoint
+app.post('/login', (req, res) => {
+  // Extract the username from the request body
+  const username = req.body.username;
+
+  // Set a cookie named 'username' with the value of the extracted username
+  res.cookie('username', username);
+
+  // Redirect the user to the '/urls' page
+  res.redirect('/urls');
+});
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
