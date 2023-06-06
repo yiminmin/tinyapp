@@ -70,6 +70,16 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
+//add /logout route
+app.post('/logout', (req, res) => {
+  // Clear the 'username' cookie
+  res.clearCookie('username');
+  
+  // Redirect the user to the '/urls' page
+  res.redirect('/urls');
+});
+
+
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL];
