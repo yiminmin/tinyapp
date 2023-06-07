@@ -3,6 +3,19 @@ const app = express();
 const PORT = 8080; // default port 8080
 const cookieParser = require('cookie-parser');//add cookieParser
 
+//create a user object
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
 
 app.set("view engine", "ejs");
 app.use(cookieParser()); //apply cookieParser()
@@ -58,22 +71,36 @@ app.post("/urls/:id", (req, res) => {
     res.redirect("/urls");
 });
 
-// Handle POST request to '/login' endpoint
+// update Handle POST request to '/login' endpoint
 app.post('/login', (req, res) => {
-  // Extract the username from the request body
-  const username = req.body.username;
+  // Extract the email from the request body
+  const email = req.body.email;
 
-  // Set a cookie named 'username' with the value of the extracted username
-  res.cookie('username', username);
+  // You will need to implement some logic here to find the user by their email
+  // and set the user_id cookie to the id of the user who's logging in
+  // For example:
+  let userId;
+  for (let id in users) {
+    if (users[id].email === email) {
+      userId = id;
+    }
+  }
 
-  // Redirect the user to the '/urls' page
-  res.redirect('/urls');
+  if (userId) {
+    // If a user was found with the provided email
+    res.cookie('user_id', userId);
+    res.redirect('/urls');
+  } else {
+    // If no user was found
+    // You should handle this situation appropriately in your application
+    res.status(403).send('Email not found');
+  }
 });
 
 //add /logout route
 app.post('/logout', (req, res) => {
   // Clear the 'username' cookie
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   
   // Redirect the user to the '/urls' page
   res.redirect('/urls');
@@ -96,11 +123,23 @@ app.post('/register', (req, res) => {
   const email = req.body.email; // Extract the email from the request body
   const password = req.body.password; // Extract the password from the request body
 
-  // Store the email and password in your user database or perform any necessary actions for user registration
-  // ...
+  // Generate a unique ID for the new user
+  const userId = generateRandomString();
 
-  res.redirect('/login'); // Redirect the user to the login page (replace '/login' with the appropriate route)
+  // Create a new user object and add it to the 'users' object
+  users[userId] = {
+    id: userId,
+    email: email,
+    password: password
+  };
+
+  // Set a cookie named 'user_id' with the value of the newly generated user ID
+  res.cookie('user_id', userId);
+
+  // Redirect the user to the '/urls' page
+  res.redirect('/urls');
 });
+
 
 //add get register route
 app.get("/register", (req, res) => {
@@ -108,22 +147,26 @@ app.get("/register", (req, res) => {
 });
 
 //update the /urls/new route
-app.get("/urls/new", (req, res) => {
-  let templateVars = {
-    username: req.cookies["username"] // Access the username from the cookie
+app.get("/urls", (req, res) => {
+  const userId = req.cookies["user_id"];
+  const user = users[userId]; // Lookup the specific user object using the user_id cookie value
+
+  const templateVars = { 
+    urls: urlDatabase,
+    user: user // Pass the entire user object
   };
-  res.render("urls_new", templateVars);
+  res.render("urls_index", templateVars);
 });
 
 
 //update urls to pass in the username
-app.get("/urls", (req, res) => {
-  const templateVars = { 
-    urls: urlDatabase,
-    username: req.cookies["username"] // Access the username from the cookie
-  };
-  res.render("urls_index", templateVars);
-});
+// app.get("/urls", (req, res) => {
+//   const templateVars = { 
+//     urls: urlDatabase,
+//     username: req.cookies["username"] // Access the username from the cookie
+//   };
+//   res.render("urls_index", templateVars);
+// });
 
 // update the /urls/:id pass in the username
 app.get("/urls/:id", (req, res) => {
