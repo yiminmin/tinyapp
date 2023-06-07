@@ -2,31 +2,30 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const cookieParser = require('cookie-parser');//add cookieParser
+const bcrypt = require('bcrypt'); // Add this line to include bcrypt module
+
 
 //create a user object
 const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur",
+    password: bcrypt.hashSync("purple-monkey-dinosaur", 10), // Passwords are hashed for added security
   },
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk",
+    password: bcrypt.hashSync("dishwasher-funk", 10), // Passwords are hashed for added security
   },
 };
 
 app.set("view engine", "ejs");
 app.use(cookieParser()); //apply cookieParser()
 
-
-
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-
 
 // function generateRandomString() to generate an unique short url for the input long term url
 function generateRandomString() {
@@ -81,22 +80,15 @@ app.post('/login', (req, res) => {
   // You will need to implement some logic here to find the user by their email
   // and set the user_id cookie to the id of the user who's logging in
   // For example:
-  let userId;
   for (let id in users) {
-    if (users[id].email === email) {
-      userId = id;
+    if (users[id].email === email && bcrypt.compareSync(password, users[id].password)) { // Check if password matches
+    res.cookie('user_id', id);
+    return res.redirect('/urls');
     }
   }
 
-  if (userId) {
-    // If a user was found with the provided email
-    res.cookie('user_id', userId);
-    res.redirect('/urls');
-  } else {
-    // If no user was found
-    // You should handle this situation appropriately in your application
-    res.status(403).send('Email not found');
-  }
+  res.status(403).send('Email or password incorrect');
+
 });
 
 // add a new endpoint render the new login.ejs
@@ -107,19 +99,24 @@ app.get("/login", (req, res) => {
 
 //add /logout route
 app.post('/logout', (req, res) => {
+
   // Clear the 'username' cookie
   res.clearCookie('user_id');
   
   // Redirect the user to the '/urls' page
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL];
+  const userId = req.cookies["user_id"];
+  const user = users[userId]; // Lookup the specific user object using the user_id cookie value
+
+
   if (longURL) {
-    let templateVars = { shortURL: req.params.id, longURL: longURL };
+    let templateVars = { shortURL: req.params.id, longURL: longURL, user: user };
     res.render("urls_show", templateVars);
   } else {
     res.status(404).send("Short URL Not Found");
@@ -139,7 +136,7 @@ function getUserByEmail(email, users) {
 // Handle POST request to '/register' endpoint
 app.post('/register', (req, res) => {
   const email = req.body.email; // Extract the email from the request body
-  const password = req.body.password; // Extract the password from the request body
+  const password = bcrypt.hashSync(req.body.password, 10); // Hash the password
 
    // Check if email or password are empty
   if (!email || !password) {
@@ -188,21 +185,17 @@ app.get("/urls", (req, res) => {
 });
 
 
-//update urls to pass in the username
-// app.get("/urls", (req, res) => {
-//   const templateVars = { 
-//     urls: urlDatabase,
-//     username: req.cookies["username"] // Access the username from the cookie
-//   };
-//   res.render("urls_index", templateVars);
-// });
-
 // update the /urls/:id pass in the username
 app.get("/urls/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL];
+  const userId = req.cookies["user_id"];
+  const user = users[userId]; // Lookup the specific user object using the user_id cookie value
+
   let templateVars = { 
     shortURL: req.params.id, 
-    longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"] // Access the username from the cookie
+    longURL: longURL,
+    user: user // Access the username from the cookie
   };
   res.render("urls_show", templateVars);
 });
