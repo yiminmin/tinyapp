@@ -118,11 +118,32 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+// Function to retrieve a user object based on their email address
+function getUserByEmail(email, users) {
+  for (let id in users) {
+    if (users[id].email === email) {
+      return users[id];
+    }
+  }
+  return null;
+}
+
 // Handle POST request to '/register' endpoint
 app.post('/register', (req, res) => {
   const email = req.body.email; // Extract the email from the request body
   const password = req.body.password; // Extract the password from the request body
 
+   // Check if email or password are empty
+  if (!email || !password) {
+    return res.status(400).send('Email and password must not be empty');
+  }
+
+  // Check if email is already registered
+  if (getUserByEmail(email, users)) {
+    return res.status(400).send('Email is already registered');
+  }
+  
+  // If email and password are valid, continue with registration
   // Generate a unique ID for the new user
   const userId = generateRandomString();
 
