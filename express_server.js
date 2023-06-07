@@ -91,6 +91,22 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+// Handle POST request to '/register' endpoint
+app.post('/register', (req, res) => {
+  const email = req.body.email; // Extract the email from the request body
+  const password = req.body.password; // Extract the password from the request body
+
+  // Store the email and password in your user database or perform any necessary actions for user registration
+  // ...
+
+  res.redirect('/login'); // Redirect the user to the login page (replace '/login' with the appropriate route)
+});
+
+//add get register route
+app.get("/register", (req, res) => {
+  res.render("registration");
+});
+
 //update the /urls/new route
 app.get("/urls/new", (req, res) => {
   let templateVars = {
