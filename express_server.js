@@ -92,9 +92,13 @@ app.post('/login', (req, res) => {
 });
 
 // add a new endpoint render the new login.ejs
+// add a new endpoint render the new login.ejs
 app.get("/login", (req, res) => {
-  res.render("login");
+  const userId = req.cookies["user_id"];
+  const user = users[userId]; // Lookup the specific user object using the user_id cookie value
+  res.render("login", {user: user});
 });
+
 
 
 //add /logout route
@@ -169,7 +173,9 @@ app.post('/register', (req, res) => {
 
 //add get register route
 app.get("/register", (req, res) => {
-  res.render("registration");
+  const userId = req.cookies["user_id"];
+  const user = users[userId]; // Lookup the specific user object using the user_id cookie value
+  res.render("registration", {user: user});
 });
 
 //update the /urls/new route
