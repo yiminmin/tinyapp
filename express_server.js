@@ -92,9 +92,12 @@ app.post('/login', (req, res) => {
 });
 
 // add a new endpoint render the new login.ejs
-// add a new endpoint render the new login.ejs
 app.get("/login", (req, res) => {
   const userId = req.cookies["user_id"];
+   if(userId){
+    // User is logged in, redirect to /urls
+    return res.redirect("/urls");
+  }
   const user = users[userId]; // Lookup the specific user object using the user_id cookie value
   res.render("login", {user: user});
 });
@@ -174,6 +177,9 @@ app.post('/register', (req, res) => {
 //add get register route
 app.get("/register", (req, res) => {
   const userId = req.cookies["user_id"];
+   if (userId) {  // The user is logged in
+    return res.redirect("/urls");
+  }
   const user = users[userId]; // Lookup the specific user object using the user_id cookie value
   res.render("registration", {user: user});
 });
