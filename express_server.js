@@ -75,6 +75,8 @@ app.post("/urls/:id", (req, res) => {
 app.post('/login', (req, res) => {
   // Extract the email from the request body
   const email = req.body.email;
+  const password = req.body.password; // Extract password
+
 
   // You will need to implement some logic here to find the user by their email
   // and set the user_id cookie to the id of the user who's logging in
@@ -96,6 +98,12 @@ app.post('/login', (req, res) => {
     res.status(403).send('Email not found');
   }
 });
+
+// add a new endpoint render the new login.ejs
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
 
 //add /logout route
 app.post('/logout', (req, res) => {
