@@ -192,12 +192,19 @@ app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId]; // Lookup the specific user object using the user_id cookie value
 
-  let templateVars = { 
-    shortURL: req.params.id, 
-    longURL: longURL,
-    user: user // Access the username from the cookie
-  };
-  res.render("urls_show", templateVars);
+  if (shortURL === 'new') { // 'new' page for creating a new URL
+    return res.render("urls_new", { user: user });
+  }
+  if (longURL) {
+    let templateVars = { 
+      shortURL: shortURL, 
+      longURL: longURL,
+      user: user // Access the username from the cookie
+    };
+    return res.render("urls_show", templateVars);
+  }
+
+  return res.status(404).send("Short URL Not Found");
 });
 
 
