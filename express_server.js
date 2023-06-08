@@ -180,6 +180,10 @@ function getUserByEmail(email, users) {
 // Handle POST request to '/register' endpoint
 app.post('/register', (req, res) => {
   const email = req.body.email; // Extract the email from the request body
+  const password = bcrypt.hashSync(req.body.password, 10); // Hash the password
+  console.log('Hashed password:', password); // This will print the hashed password to the console
+
+
 
    // Check if email or password are empty
   if (!email || !password) {
@@ -191,7 +195,6 @@ app.post('/register', (req, res) => {
     return res.status(400).send('Email is already registered');
   }
 
-  const password = bcrypt.hashSync(req.body.password, 10); // Hash the password
 
   
 
