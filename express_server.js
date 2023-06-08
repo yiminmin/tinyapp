@@ -103,24 +103,24 @@ app.post("/urls/:id", (req, res) => {
 
 // update Handle POST request to '/login' endpoint
 app.post('/login', (req, res) => {
-  // Extract the email from the request body
-  const email = req.body.email;
-  const password = req.body.password; // Extract password
+  // Extract the email and password from the request body
+  const { email, password } = req.body;
 
-
-  // You will need to implement some logic here to find the user by their email
-  // and set the user_id cookie to the id of the user who's logging in
-  // For example:
   for (let id in users) {
-    if (users[id].email === email && bcrypt.compareSync(password, users[id].password)) { // Check if password matches
-    res.cookie('user_id', id);
-    return res.redirect('/urls');
+    if (users[id].email === email) { 
+      if (bcrypt.compareSync(password, users[id].password)) { // Check if password matches
+        res.cookie('user_id', id);
+        return res.redirect('/urls');
+      } else {
+        return res.status(403).send('Password is incorrect');
+      }
     }
   }
 
-  res.status(403).send('Email or password incorrect');
-
+  // If the loop completes without finding a match, that means no user with that email was found
+  return res.status(403).send('User with that email cannot be found');
 });
+
 
 // add a new endpoint render the new login.ejs
 app.get("/login", (req, res) => {
@@ -148,6 +148,12 @@ app.post('/logout', (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
+
+  // New: send error message if the short URL doesn't exist
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send("Short URL Not Found");
+  }
+
   const longURL = urlDatabase[shortURL].longURL;
   const userId = req.cookies["user_id"];
   const user = users[userId]; // Lookup the specific user object using the user_id cookie value
@@ -174,7 +180,6 @@ function getUserByEmail(email, users) {
 // Handle POST request to '/register' endpoint
 app.post('/register', (req, res) => {
   const email = req.body.email; // Extract the email from the request body
-  const password = bcrypt.hashSync(req.body.password, 10); // Hash the password
 
    // Check if email or password are empty
   if (!email || !password) {
@@ -185,7 +190,11 @@ app.post('/register', (req, res) => {
   if (getUserByEmail(email, users)) {
     return res.status(400).send('Email is already registered');
   }
+
+  const password = bcrypt.hashSync(req.body.password, 10); // Hash the password
+
   
+
   // If email and password are valid, continue with registration
   // Generate a unique ID for the new user
   const userId = generateRandomString();
@@ -259,8 +268,13 @@ app.get("/urls/:id", (req, res) => {
       longURL: urlDatabase[shortURL].longURL,
       user: user 
     };
+
     return res.render("urls_show", templateVars);
   }
+  console.log("urlDatabase[shortURL]:", urlDatabase[shortURL]);
+  console.log("userId:", userId);
+  console.log("hello");
+
 
   return res.status(404).send("Short URL Not Found");
 });

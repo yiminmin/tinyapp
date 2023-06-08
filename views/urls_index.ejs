@@ -35,11 +35,10 @@
               <%= id %>
             </td>
             <td>
-              <%= urls[id] %>
+              <%= urls[id].longURL %>
             </td>
             <td>
               <a href="/urls/<%= id %>" class="btn btn-outline-primary">Edit</a>
-            </td>
             </td>
             <td>
               <form method="POST" action="/urls/<%= id %>/delete">
