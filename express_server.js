@@ -3,7 +3,10 @@ const app = express();
 const PORT = 8080; // default port 8080
 const cookieSession = require('cookie-session'); //replace cookieParse with cookieSession
 const bcrypt = require('bcrypt'); // Add this line to include bcrypt module
+const methodOverride = require('method-override') //to enable override method
 
+// express_server.js
+const { getUserByEmail } = require('./helpers.js');
 //create a user object
 const users = {
   userRandomID: {
@@ -17,6 +20,9 @@ const users = {
     password: bcrypt.hashSync('dishwasher-funk', 10), // Passwords are hashed for added security
   },
 };
+
+//apply override
+app.use(methodOverride('_method'))
 
 app.set('view engine', 'ejs');
 //apply cookieSession to replace cookieParse()
@@ -83,7 +89,7 @@ app.post('/urls', (req, res) => {
 });
 
 // /urls/:id/delete update the delete button function
-app.post('/urls/:id/delete', (req, res) => {
+app.delete('/urls/:id', (req, res) => {
   const id = req.params.id; // the the url id
   const userId = req.session.user_id; // get user ID from cookies
 
@@ -98,7 +104,7 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 // app.post, update the edited context in /urls/:id
-app.post('/urls/:id', (req, res) => {
+app.put('/urls/:id', (req, res) => {
   const id = req.params.id;
   const userId = req.session.user_id;
   if (urlDatabase[id] && urlDatabase[id].userID === userId) {
@@ -116,17 +122,20 @@ app.post('/login', (req, res) => {
   // Extract the email and password from the request body
   const { email, password } = req.body;
 
-  for (let id in users) {
-    if (users[id].email === email) {
-      if (bcrypt.compareSync(password, users[id].password)) {
-        // Check if password matches
-        req.session.user_id = id;
-        return res.redirect('/urls');
-      } else {
+  //using the getUserByEmail()
+  const user = getUserByEmail(email, users);
+
+  if (user) {
+    if (bcrypt.compareSync(password, user.password)) {
+      // Check if password matches
+      req.session.user_id = user.id;
+      return res.redirect('/urls');
+    } else {
         return res.status(403).send('Password is incorrect');
-      }
     }
+
   }
+
 
   // If the loop completes without finding a match, that means no user with that email was found
   return res.status(403).send('User with that email cannot be found');
@@ -175,16 +184,6 @@ app.get('/u/:id', (req, res) => {
     res.status(404).send('Short URL Not Found');
   }
 });
-
-// Function to retrieve a user object based on their email address
-function getUserByEmail(email, users) {
-  for (let id in users) {
-    if (users[id].email === email) {
-      return users[id];
-    }
-  }
-  return null;
-}
 
 // Handle POST request to '/register' endpoint
 app.post('/register', (req, res) => {
