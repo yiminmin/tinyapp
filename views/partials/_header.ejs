@@ -13,29 +13,35 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
+      <div class="navbar-nav mr-auto">
+        <!-- 'mr-auto' pushes the next 'navbar-nav' to the right -->
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        <% if (user) { %>
-        <!-- If the user is logged in -->
-        <div>
+      </div>
+      <% if (user) { %>
+      <!-- If the user is logged in -->
+      <div class="navbar-nav pr-3">
+        <!-- Added padding to the right -->
+        <span class="navbar-text mr-3">
+          <!-- Added margin to the right -->
           Logged in as: <%= user.email %>
           <!-- Display the username -->
-          <form action="/logout" method="POST">
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit">
-              Logout
-            </button>
-          </form>
-        </div>
-        <% } else { %>
-        <!-- If the user is not logged in -->
+        </span>
+        <form class="form-inline" action="/logout" method="POST">
+          <button class="btn btn-secondary my-2 my-sm-0" type="submit">
+            Logout
+          </button>
+        </form>
+      </div>
+      <% } else { %>
+      <!-- If the user is not logged in -->
+      <div class="navbar-nav">
         <a class="nav-item nav-link" href="/login">Login</a>
         <!-- Replace the form with a login link -->
         <a class="nav-item nav-link" href="/register">Register</a>
         <!-- Add the registration link/button -->
-
-        <% } %>
       </div>
+      <% } %>
     </div>
   </nav>
 </header>
