@@ -77,7 +77,9 @@ app.post('/urls', (req, res) => {
   const userId = req.session.user_id;
   if (!userId) {
     // if user is not logged in
-    return res.status(401).send('Unauthorized: Please login first.');
+     return res.status(401).send('<p>Unauthorized: Please login or register first.</p> \
+      <button onclick="location.href=\'/login\'" type="button">Login</button> \
+      <button onclick="location.href=\'/register\'" type="button">Register</button>');
   }
   const longURL = req.body.longURL; // Assume "longURL" is the name of input field
   const shortURL = generateRandomString();
@@ -235,8 +237,10 @@ app.get('/urls', (req, res) => {
   const user = users[userId]; // Lookup the specific user object using the user_id cookie value
   if (!userId) {
     // if user is not logged in
-    return res.status(401).send('Unauthorized: Please login first.');
-  }
+    return res.status(401).send('<p>Unauthorized: Please login or register first.</p> \
+      <button onclick="location.href=\'/login\'" type="button">Login</button> \
+      <button onclick="location.href=\'/register\'" type="button">Register</button>');  
+    }
   const urls = urlsForUser(userId); // get URLs that belong to the logged-in user
 
   const templateVars = {
@@ -268,7 +272,10 @@ app.get('/urls/:id', (req, res) => {
 
   if (!userId) {
     // if user is not logged in
-    return res.status(401).send('Unauthorized: Please login first.');
+    // return res.status(401).send('Unauthorized: Please login first.');
+     return res.status(401).send('<p>Unauthorized: Please login or register first.</p> \
+      <button onclick="location.href=\'/login\'" type="button">Login</button> \
+      <button onclick="location.href=\'/register\'" type="button">Register</button>');
   }
   if (urlDatabase[shortURL] && urlDatabase[shortURL].userID === userId) {
     // if URL exists and belongs to the logged-in user
