@@ -3,7 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const cookieSession = require('cookie-session'); //replace cookieParse with cookieSession
 const bcrypt = require('bcrypt'); // Add this line to include bcrypt module
-const methodOverride = require('method-override') //to enable override method
+const methodOverride = require('method-override'); //to enable override method
 
 // express_server.js
 const { getUserByEmail } = require('./helpers.js');
@@ -22,7 +22,7 @@ const users = {
 };
 
 //apply override
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
 
 app.set('view engine', 'ejs');
 //apply cookieSession to replace cookieParse()
@@ -77,9 +77,13 @@ app.post('/urls', (req, res) => {
   const userId = req.session.user_id;
   if (!userId) {
     // if user is not logged in
-     return res.status(401).send('<p>Unauthorized: Please login or register first.</p> \
+    return res
+      .status(401)
+      .send(
+        '<p>Unauthorized: Please login or register first.</p> \
       <button onclick="location.href=\'/login\'" type="button">Login</button> \
-      <button onclick="location.href=\'/register\'" type="button">Register</button>');
+      <button onclick="location.href=\'/register\'" type="button">Register</button>'
+      );
   }
   const longURL = req.body.longURL; // Assume "longURL" is the name of input field
   const shortURL = generateRandomString();
@@ -133,11 +137,9 @@ app.post('/login', (req, res) => {
       req.session.user_id = user.id;
       return res.redirect('/urls');
     } else {
-        return res.status(403).send('Password is incorrect');
+      return res.status(403).send('Password is incorrect');
     }
-
   }
-
 
   // If the loop completes without finding a match, that means no user with that email was found
   return res.status(403).send('User with that email cannot be found');
@@ -237,10 +239,14 @@ app.get('/urls', (req, res) => {
   const user = users[userId]; // Lookup the specific user object using the user_id cookie value
   if (!userId) {
     // if user is not logged in
-    return res.status(401).send('<p>Unauthorized: Please login or register first.</p> \
+    return res
+      .status(401)
+      .send(
+        '<p>Unauthorized: Please login or register first.</p> \
       <button onclick="location.href=\'/login\'" type="button">Login</button> \
-      <button onclick="location.href=\'/register\'" type="button">Register</button>');  
-    }
+      <button onclick="location.href=\'/register\'" type="button">Register</button>'
+      );
+  }
   const urls = urlsForUser(userId); // get URLs that belong to the logged-in user
 
   const templateVars = {
@@ -273,9 +279,13 @@ app.get('/urls/:id', (req, res) => {
   if (!userId) {
     // if user is not logged in
     // return res.status(401).send('Unauthorized: Please login first.');
-     return res.status(401).send('<p>Unauthorized: Please login or register first.</p> \
+    return res
+      .status(401)
+      .send(
+        '<p>Unauthorized: Please login or register first.</p> \
       <button onclick="location.href=\'/login\'" type="button">Login</button> \
-      <button onclick="location.href=\'/register\'" type="button">Register</button>');
+      <button onclick="location.href=\'/register\'" type="button">Register</button>'
+      );
   }
   if (urlDatabase[shortURL] && urlDatabase[shortURL].userID === userId) {
     // if URL exists and belongs to the logged-in user
