@@ -60,7 +60,7 @@ Then, navigate to `http://localhost:8080` in your browser.
 
 ## Final Product
 
-!["Screenshot of URLs page"](https://github.com/yiminmin/tinyapp/blob/main/docs/screenshot_of_urls.png)
+!["Screenshot of URLs page"](https://github.com/yiminmin/tinyapp/blob/main/docs/urls_page.png)
 !["Screenshot of register page"](https://github.com/yiminmin/tinyapp/blob/main/docs/register_page.png)
 
 ## Contributing
