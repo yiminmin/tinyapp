@@ -58,6 +58,11 @@ Then, navigate to `http://localhost:8080` in your browser.
 - [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme) - A library to help you hash passwords.
 - [cookie-parser](https://www.npmjs.com/package/cookie-parser) - Cookie parsing middleware.
 
+## Final Product
+
+!["Screenshot of URLs page"](https://github.com/yiminmin/tinyapp/blob/main/docs/screenshot_of_urls.png)
+!["Screenshot of register page"](https://github.com/yiminmin/tinyapp/blob/main/docs/register_page.png)
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Please make sure to update tests as appropriate.
